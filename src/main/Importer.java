@@ -1,12 +1,20 @@
 package main;
 
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 public class Importer {
 
@@ -14,15 +22,59 @@ public class Importer {
 	protected int instanceOf;
 	
 	/* IO objects */
-	File fi;
-	FileReader fr;
+	private File fi;
 
 	/* UI objects */
+	private JFrame frm;
+	private JLabel lblheader;
+	private JLabel lblstatus;
+	private JPanel pnlcontrol;
 	
-	private Importer() throws SingletonException{
+	public Importer() throws SingletonException{
 		instanceOf++;
 		if(instanceOf > 1)
 			throw new SingletonException();
+		
+		beginGUI();
+		showFileChooser();
+	}
+
+	private void beginGUI(){
+		frm = new JFrame("Game of Life : File Selection");
+		frm.setSize(400,400);
+		frm.setLayout(new GridLayout(3,1));
+		// TODO: exit on close
+		lblheader = new JLabel("", JLabel.CENTER);
+		lblstatus = new JLabel("", JLabel.CENTER);
+		lblstatus.setSize(350,100);
+		pnlcontrol = new JPanel();
+		pnlcontrol.setLayout(new FlowLayout());
+		frm.add(lblheader);
+		frm.add(pnlcontrol);
+		frm.add(lblstatus);
+		frm.pack();
+		frm.setVisible(true);
+	}
+	
+	private void showFileChooser(){
+		lblheader.setText("Select a file.");
+		final JFileChooser fc = new JFileChooser();
+		JButton btnchoose = new JButton("Open File");
+		btnchoose.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent event) {
+				int status = fc.showOpenDialog(frm);
+				
+				if(status == JFileChooser.APPROVE_OPTION){
+					fi = fc.getSelectedFile();
+					lblstatus.setText("File Selected : " + fi.getName());
+				} else {
+					lblstatus.setText("Open command cancelled.");
+				}
+			}
+		});
+		
+		pnlcontrol.add(btnchoose);
+		frm.setVisible(true);
 	}
 	
 	public Map importFile(String path) throws IOException{
