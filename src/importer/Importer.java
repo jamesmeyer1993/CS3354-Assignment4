@@ -1,25 +1,17 @@
 package importer;
 
 import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+/* LOCAL IMPORTS */
+import cellmap.*;
+import exceptions.*;
+import main.*;
 
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-
-import cellmap.Cell;
-import cellmap.Map;
-import exceptions.SingletonException;
-
-import main.Driver;
-
-public class Importer implements ActionListener {
+public class Importer {
 
 	private ImporterGUI gui;
 	
@@ -34,36 +26,31 @@ public class Importer implements ActionListener {
 		instanceOf++;
 		if(instanceOf > 1)
 			throw new SingletonException();
+		
+		fi = null;
 	}
-	
-	/* 
-	 * Setters 
-	 * */
-	
-	public void setGUI(ImporterGUI ui){ gui = ui; }
 	
 	/*
 	 * Data Processing Methods
 	 * */
-	
-	public Map<Cell> importFile(File f) throws IOException{
-		
-		fi = f;
+	public Map<Cell> importFile(){
 		
 		if( fi == null)
 			throw new NullPointerException();	/* This exception should never happen */
 		
-		if( ( !fi.exists() ) || ( fi.isDirectory() ) )
-			throw new IOException("Valid file does not exist.");
+		String smap = null;
 		
-		if(fi.length() > Driver.MAX_FILE_SIZE)
-			throw new IOException("File is too large. Choose a file less than 1024 bytes.");
-		
-		/* Read file in */
-		String smap = new String(Files.readAllBytes(
-				Paths.get(fi.getPath())), StandardCharsets.UTF_8);
-		
-		this.checkCharsVerify(smap);
+		try{
+			this.checkFileVerify();
+			/* Read file in */
+			smap = new String(Files.readAllBytes(
+					Paths.get(fi.getPath())), StandardCharsets.UTF_8);
+			this.checkCharsVerify(smap);
+		}
+		catch(IOException e)
+		{
+			e.printStackTrace();
+		}
 		
 		/* Determine longest line and number of lines */
 		int longest = 0;
@@ -83,32 +70,33 @@ public class Importer implements ActionListener {
 		}
 		
 		/* Now we have the data we need to instantiate a map */
-		Map<Cell> m = new Map<Cell>(new Dimension(longest, lines));		
+		map = new Map<Cell>(new Dimension(longest, lines));		
 		
 		int p = 0;
-		for(int i = 0; i < m.getHeight(); i++){
-			for(int j = 0; j < m.getWidth(); j++){
+		for(int i = 0; i < map.getHeight(); i++){
+			for(int j = 0; j < map.getWidth(); j++){
 				if( ( smap.charAt(p) == 'x' ) || ( smap.charAt(p) == 'X') )
-					m.setAt(new Cell(true, m, i, j), i, j);
+					map.setAt(new Cell(true, map, i, j), i, j);
 				else
-					m.setAt(new Cell(false, m, i, j), i, j);
+					map.setAt(new Cell(false, map, i, j), i, j);
 				p++;
 			}
 		}
 		
-		return m;
-	}
-	
-	public File getSelectedFile(){
-		if(fi == null)
-			throw new NullPointerException();
-		return fi;
-	}
-	
-	public Map<Cell> getImportedMap(){
-		if(map == null)
-			throw new NullPointerException();
 		return map;
+	}
+	
+	public Map<Cell> importFile(File f) {
+		fi = f;	
+		return this.importFile();
+	}
+	
+	private void checkFileVerify() throws IOException{
+		if( ( !fi.exists() ) || ( fi.isDirectory() ) )
+			throw new IOException("Valid file does not exist.");
+		
+		if(fi.length() > Driver.MAX_FILE_SIZE)
+			throw new IOException("File is too large. Choose a file less than 1024 bytes.");
 	}
 	
 	private void checkCharsVerify(String s) throws IOException{
@@ -126,21 +114,23 @@ public class Importer implements ActionListener {
 						+ Driver.VALID_CHARS.toString());
 		}
 	}
-
-	public void actionPerformed(ActionEvent event) {
-			
-		int status = gui.getStatus();
-		JFileChooser fc = gui.getFileChooser();
-		JFrame frm = gui.getFrame();
-		JLabel lbl = gui.getStatusLabel();
-		
-		if(status == JFileChooser.APPROVE_OPTION){
-			fi = fc.getSelectedFile();
-			lbl.setText("File Selected : " + fi.getName());
-			frm.setVisible(false);
-			frm.dispose();
-		} else {
-			lbl.setText("Open command cancelled.");
-		}
+	
+	/*
+	 * Setters
+	 * */
+	public void setSelectedFile(File f){ fi = f; }
+	
+	public void setGUI(ImporterGUI ui){ gui = ui; }
+	
+	/*
+	 * Getters
+	 * */
+	public File getSelectedFile(){ return fi; }
+	
+	public Map<Cell> getImportedMap(){
+		if(map == null)
+			throw new NullPointerException();
+		return map;
 	}
+
 }

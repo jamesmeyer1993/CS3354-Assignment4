@@ -7,6 +7,8 @@ package main;
 /*
  * LOCAL IMPORTS
  * */
+import java.util.concurrent.TimeUnit;
+
 import importer.*;
 import cellmap.*;
 
@@ -16,20 +18,40 @@ public class Driver {
 	public static final char VALID_CHARS[] = {'X','x','O','o','\n',(char)10,'0','1','2','3','4','5','6','7','8','9'};
 	public static final int MAX_FILE_SIZE = 1024;
 	
-	/* Shared variables that ought to be integrated into some design pattern for better protection/access */
-	public static int importer_constructor_status;
-	
-	static Map<Cell> cmap;
-	
 	/*	*	*	*	*	*	*	*	*	*	*	*	*	*	
 	 * 	*	*	*	*	*	*	MAIN	*	*	*	*	*
 	 * 	*	*	*	*	*	*	*	*	*	*	*	*	*
 	 */
 	public static void main(String[] args) {
 	
+		/* DEBUG */System.out.print("Driver:\tBegin main...\n");
 		Importer imp = new Importer();
 		ImporterGUI impui = new ImporterGUI(imp);
+		imp.setGUI(impui);
+	
+		try {
+			int sec = 0;
+			while(imp.getSelectedFile() == null){
+				/* DEBUG */System.out.print("Driver:\timp.getSelectedFile() == null.\n");
+				TimeUnit.SECONDS.sleep(1);
+				sec++;
+				if(sec > 300)
+					throw new RuntimeException();
+			}
+		} 
+		catch (InterruptedException e) 
+		{
+			e.printStackTrace();
+		}
+		catch (RuntimeException e)
+		{
+			e.printStackTrace();
+		}
 		
-	}
+		/* DEBUG */System.out.print("Driver:\tReady to import.\n");
+		Map<Cell> cmap = imp.importFile();
+		
+		System.out.print(cmap.toString()+"\n\n");
+	}	
 
 }

@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 
 import exceptions.SingletonException;
 
-public class ImporterGUI {
+public class ImporterGUI implements ActionListener{
 
 	int instanceOf;
 	File fi;
@@ -61,12 +61,7 @@ public class ImporterGUI {
 		fc = new JFileChooser();
 		JButton btnchoose = new JButton("Open File");
 		
-		/*
-		 * This is where the importer object listens to the choose button.
-		 * From here, once a button click event occurs, the importer takes
-		 * over. 
-		 * */
-		btnchoose.addActionListener(imp);
+		btnchoose.addActionListener(this);
 		
 		pnlcontrol.add(btnchoose);
 		
@@ -82,4 +77,22 @@ public class ImporterGUI {
 	public JLabel getStatusLabel(){return lblstatus;}
 	
 	public int getStatus(){ return fc.showOpenDialog(frm); }
+
+	public void actionPerformed(ActionEvent e) {
+		
+		System.out.print("ImportGUI:\tAction Event 00% complete.\n");
+		
+		int status = fc.showOpenDialog(frm);		
+		if(status == JFileChooser.APPROVE_OPTION){
+			fi = fc.getSelectedFile();
+			lblheader.setText("File Selected : " + fi.getName());
+			frm.setVisible(false);
+			frm.dispose();
+		} else {
+			lblheader.setText("Open command cancelled.");
+		}
+		
+		System.out.print("ImportGUI:\tAction Event 50% complete.\n");
+		imp.setSelectedFile(fi);
+	}
 }
