@@ -1,4 +1,4 @@
-package main;
+package scrap;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;

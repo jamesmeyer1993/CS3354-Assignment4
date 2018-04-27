@@ -4,11 +4,11 @@
 
 package main;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-
-import cellmap.Cell;
-import cellmap.Map;
+/*
+ * LOCAL IMPORTS
+ * */
+import importer.*;
+import cellmap.*;
 
 public class Driver {
 
@@ -26,21 +26,10 @@ public class Driver {
 	 * 	*	*	*	*	*	*	*	*	*	*	*	*	*
 	 */
 	public static void main(String[] args) {
-
-		boolean validimport = false;
-		while(validimport != true){
-			
-			try
-			{
-				Importer imp = new Importer();
-				//cmap = imp.getImportedMap();
-				//System.out.print(cmap.toString());
-			}  
-			catch (InterruptedException e)
-			{
-				System.err.print("IOException in main.\n\n"+e.getStackTrace());
-			}
-		}
+	
+		Importer imp = new Importer();
+		ImporterGUI impui = new ImporterGUI(imp);
+		
 	}
 
 }

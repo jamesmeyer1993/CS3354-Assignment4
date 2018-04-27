@@ -1,11 +1,17 @@
 package importer;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 
 import cellmap.Cell;
 import cellmap.Map;
@@ -13,8 +19,10 @@ import exceptions.SingletonException;
 
 import main.Driver;
 
-public class Importer {
+public class Importer implements ActionListener {
 
+	private ImporterGUI gui;
+	
 	/* Singleton variables */
 	protected int instanceOf;
 	
@@ -27,6 +35,16 @@ public class Importer {
 		if(instanceOf > 1)
 			throw new SingletonException();
 	}
+	
+	/* 
+	 * Setters 
+	 * */
+	
+	public void setGUI(ImporterGUI ui){ gui = ui; }
+	
+	/*
+	 * Data Processing Methods
+	 * */
 	
 	public Map<Cell> importFile(File f) throws IOException{
 		
@@ -71,9 +89,9 @@ public class Importer {
 		for(int i = 0; i < m.getHeight(); i++){
 			for(int j = 0; j < m.getWidth(); j++){
 				if( ( smap.charAt(p) == 'x' ) || ( smap.charAt(p) == 'X') )
-					m.setAt(new Cell(true, m), i, j);
+					m.setAt(new Cell(true, m, i, j), i, j);
 				else
-					m.setAt(new Cell(false, m), i, j);
+					m.setAt(new Cell(false, m, i, j), i, j);
 				p++;
 			}
 		}
@@ -106,6 +124,23 @@ public class Importer {
 				throw new IOException("Invalid character: " + s.charAt(i) + "\n"
 						+ "Valid characters are:\n"
 						+ Driver.VALID_CHARS.toString());
+		}
+	}
+
+	public void actionPerformed(ActionEvent event) {
+			
+		int status = gui.getStatus();
+		JFileChooser fc = gui.getFileChooser();
+		JFrame frm = gui.getFrame();
+		JLabel lbl = gui.getStatusLabel();
+		
+		if(status == JFileChooser.APPROVE_OPTION){
+			fi = fc.getSelectedFile();
+			lbl.setText("File Selected : " + fi.getName());
+			frm.setVisible(false);
+			frm.dispose();
+		} else {
+			lbl.setText("Open command cancelled.");
 		}
 	}
 }
