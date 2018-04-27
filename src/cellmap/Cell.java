@@ -1,4 +1,5 @@
-package main;
+package cellmap;
+
 
 public class Cell implements Runnable {
 
@@ -7,7 +8,7 @@ public class Cell implements Runnable {
 	private Cell neighbor[];
 	private int neighbors;
 	private boolean curstate, prevstate;
-	private int x, y;
+	private int x, y, generation;
 	
 	public Cell(boolean a, Map<Cell> m, int x, int y){
 		curstate = a;
@@ -16,8 +17,14 @@ public class Cell implements Runnable {
 		
 		this.x = x;
 		this.y = y;
+		this.initNeighbors();
+	}
+	
+	private void initNeighbors(){
+		
+		for(int i = 0; i < neighbor.length; i++)
+			neighbor[i] = null;
 		neighbors = 0;
-		neighbor = null;
 		
 		if( x+1 < 20 ){
 			neighbor[0] = container.getAt(x+1, y);
@@ -46,26 +53,23 @@ public class Cell implements Runnable {
 		
 		if( y-1 > -1){
 			neighbor[7] = container.getAt(x, y-1); neighbors++; }
-
+		
+		return;
 	}
 	
 	public void run() {
 		
 	}
 	
-	public int[] getPosition(){
-		int pos[] = {x, y};
-		return pos;
-	}
+	public int[] getPosition(){ int pos[] = {x, y}; return pos; }
 	
 	public boolean getCurstate(){ return curstate; }
 	
 	public boolean getPrevstate(){ return prevstate; }
 	
-	public void setPosition(int x, int y){
-		this.x = x;
-		this.y = y;
-	}
+	public int getGeneration(){ return generation; }
+	
+	public int getNeighbors(){ return neighbors; }
 	
 	/* For the run algorithm */
 	private void setCurstate(boolean status){

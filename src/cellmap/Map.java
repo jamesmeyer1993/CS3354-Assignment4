@@ -1,6 +1,7 @@
-package main;
+package cellmap;
 
 import java.awt.Dimension;
+
 
 public class Map<T>{
 

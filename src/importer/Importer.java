@@ -7,10 +7,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import main.Cell;
+import cellmap.Cell;
+import cellmap.Map;
+import exceptions.SingletonException;
+
 import main.Driver;
-import main.Map;
-import main.SingletonException;
 
 public class Importer {
 

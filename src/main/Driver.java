@@ -7,6 +7,9 @@ package main;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import cellmap.Cell;
+import cellmap.Map;
+
 public class Driver {
 
 	/* Final variables */
