@@ -22,4 +22,18 @@ public class Map<T>{
 	
 	public void setAt(T elem, int x, int y){ data[x][y] = elem; }
 	
+	public String toString(){
+		String str = "";
+		for(int i = 0; i < dim.height; i++){
+			for(int j = 0; j < dim.width; j++){
+				if( ((Cell) data[i][j]).getCurstate() )
+					str = str + "X";
+				else
+					str = str + "O";
+			}
+			str = str + "\n";
+		}
+		return str;
+	}
+	
 }

@@ -43,7 +43,7 @@ public class Importer {
 		frm = new JFrame("Game of Life : File Selection");
 		frm.setSize(400,400);
 		frm.setLayout(new GridLayout(3,1));
-		// TODO: exit on close
+		frm.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		lblheader = new JLabel("", JLabel.CENTER);
 		lblstatus = new JLabel("", JLabel.CENTER);
 		lblstatus.setSize(350,100);
@@ -77,15 +77,42 @@ public class Importer {
 		frm.setVisible(true);
 	}
 	
-	public Map importFile(String path) throws IOException{
+	public File getSelectedFile(){
+		if(fi == null)
+			throw new NullPointerException();
+		return fi;
+	}
+	
+	private void checkCharsVerify(String s) throws IOException{
+		
+		for(int i = 0; i < s.length(); i++){
+			boolean valid = false;
+			int j = 0;
+			while(j < Driver.VALID_CHARS.length){
+				if(s.charAt(i) == Driver.VALID_CHARS[i])
+					valid = true;
+			}
+			if(!valid)
+				throw new IOException("Invalid character: " + s.charAt(i) + "\n"
+						+ "Valid characters are:\n"
+						+ Driver.VALID_CHARS.toString());
+		}
+	}
+	
+	public Map<Cell> importFile(String path) throws IOException{
 		
 		fi = new File(path);
-		if(!fi.exists())
-			throw new IOException();
+		if( ( !fi.exists() ) || ( fi.isDirectory() ) )
+			throw new IOException("Valid file does not exist.");
+		
+		if(fi.length() > Driver.MAX_FILE_SIZE)
+			throw new IOException("File is too large. Choose a file less than 1024 bytes.");
 		
 		/* Read file in */
 		String smap = new String(Files.readAllBytes(
 				Paths.get(fi.getPath())), StandardCharsets.UTF_8);
+		
+		this.checkCharsVerify(smap);
 		
 		/* Determine longest line and number of lines */
 		int longest = 0;
@@ -111,9 +138,9 @@ public class Importer {
 		for(int i = 0; i < m.getHeight(); i++){
 			for(int j = 0; j < m.getWidth(); j++){
 				if( ( smap.charAt(p) == 'x' ) || ( smap.charAt(p) == 'X') )
-					m.setAt(new Cell(true), i, j);
+					m.setAt(new Cell(true, m), i, j);
 				else
-					m.setAt(new Cell(false), i, j);
+					m.setAt(new Cell(false, m), i, j);
 				p++;
 			}
 		}

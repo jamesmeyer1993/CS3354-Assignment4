@@ -2,11 +2,15 @@ package main;
 
 public class Cell implements Runnable {
 
-	boolean alive;
-	int x, y;
+	private Map<Cell> container;
 	
-	public Cell(boolean a){
-		alive = a;
+	private boolean curstate, prevstate;
+	private int x, y;
+	
+	public Cell(boolean a, Map<Cell> m){
+		curstate = a;
+		prevstate = false;
+		container = m;
 	}
 	
 	public void run() {
@@ -18,13 +22,19 @@ public class Cell implements Runnable {
 		return pos;
 	}
 	
-	public boolean isAlive(){ return alive; }
+	public boolean getCurstate(){ return curstate; }
+	
+	public boolean getPrevstate(){ return prevstate; }
 	
 	public void setPosition(int x, int y){
 		this.x = x;
 		this.y = y;
 	}
 	
-	public void setAlive(boolean a){ alive = a; }
+	/* For the run algorithm */
+	private void setCurstate(boolean status){
+		prevstate = curstate;
+		curstate = status;
+	}
 	
 }
