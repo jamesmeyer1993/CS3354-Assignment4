@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.concurrent.TimeUnit;
+
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -23,22 +25,55 @@ public class Importer {
 	
 	/* IO objects */
 	private File fi;
-
+	private Map<Cell> map;
+	
 	/* UI objects */
 	private JFrame frm;
 	private JLabel lblheader;
 	private JLabel lblstatus;
 	private JPanel pnlcontrol;
 	
-	public Importer() throws SingletonException{
+	public Importer() throws SingletonException, InterruptedException{
 		instanceOf++;
 		if(instanceOf > 1)
 			throw new SingletonException();
 		
+		/* GUI Operations */
 		beginGUI();
 		showFileChooser();
+		
+		/* Store the file and the map.
+		 * First, we wait for the user to switch the status of fi from null to some selected object. */
+		int seconds = 0;
+		while(fi == null){
+			System.out.print("\tImporter\t: Step 1\t: File == null\n");
+			TimeUnit.SECONDS.sleep(1);
+			
+			/* This loop will iterate for a max of 5 minutes */
+			seconds++;
+			if(seconds > 300)
+				throw new InterruptedException("Importer\t: Program has been idle for 5 minutes.\n\n+" +
+						"Importer\t: Exiting...\n");
+		}
+		
+		System.out.print("\tImporter\t: Step 2\t:\n");
+		try 
+		{ 
+			map = this.importFile();
+			System.out.print("\tImporter\t: Step 3\t:\n");
+			System.out.print(map.toString()+"\n\n");
+		} 
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		
 	}
 
+	/* GUI Methods 
+	 *	TODO: break GUI and data portions into separate classes. This class is doing too much. 
+	 */
+	
 	private void beginGUI(){
 		frm = new JFrame("Game of Life : File Selection");
 		frm.setSize(400,400);
@@ -58,29 +93,46 @@ public class Importer {
 	
 	private void showFileChooser(){
 		lblheader.setText("Select a file.");
+		
 		final JFileChooser fc = new JFileChooser();
 		JButton btnchoose = new JButton("Open File");
-		btnchoose.addActionListener(new ActionListener(){
+		
+		/* Begin ActionListener */
+		btnchoose.addActionListener(new ActionListener()	
+		{
+			/* This method occurs on a different thread */
 			public void actionPerformed(ActionEvent event) {
+				
 				int status = fc.showOpenDialog(frm);
 				
 				if(status == JFileChooser.APPROVE_OPTION){
 					fi = fc.getSelectedFile();
 					lblstatus.setText("File Selected : " + fi.getName());
+					frm.setVisible(false);
+					frm.dispose();
 				} else {
 					lblstatus.setText("Open command cancelled.");
 				}
 			}
 		});
+		/* End ActionListener*/
 		
 		pnlcontrol.add(btnchoose);
 		frm.setVisible(true);
 	}
 	
+	/* Getters */
+	
 	public File getSelectedFile(){
 		if(fi == null)
 			throw new NullPointerException();
 		return fi;
+	}
+	
+	public Map<Cell> getImportedMap(){
+		if(map == null)
+			throw new NullPointerException();
+		return map;
 	}
 	
 	private void checkCharsVerify(String s) throws IOException{
@@ -99,9 +151,11 @@ public class Importer {
 		}
 	}
 	
-	public Map<Cell> importFile(String path) throws IOException{
+	private Map<Cell> importFile() throws IOException{
 		
-		fi = new File(path);
+		if( fi == null)
+			throw new NullPointerException();	/* This exception should never happen */
+		
 		if( ( !fi.exists() ) || ( fi.isDirectory() ) )
 			throw new IOException("Valid file does not exist.");
 		
