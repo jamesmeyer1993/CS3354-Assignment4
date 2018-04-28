@@ -3,6 +3,8 @@ package cellmap;
 
 public class Cell implements Runnable {
 
+	static protected int of_this_type_count;
+	
 	private Map<Cell> container;
 	
 	private Cell neighbor[];
@@ -11,25 +13,37 @@ public class Cell implements Runnable {
 	private int x, y, generation;
 	
 	public Cell(boolean a, Map<Cell> m, int x, int y){
+		of_this_type_count++;
 		curstate = a;
 		prevstate = false;
 		container = m;
 		
 		this.x = x;
 		this.y = y;
-		this.initNeighbors();
+		
+		/* DEBUG */
+		if(of_this_type_count%20 == 0) 
+			System.out.print("\n");
+		
+		System.out.print("Cell_" + of_this_type_count + ":\t"
+			+ "instantiated at (" + this.x + "," + this.y + ")\t");
+		/* END DEBUG */
 	}
 	
-	private void initNeighbors(){
+	public void initNeighbors(){
 		
-		for(int i = 0; i < neighbor.length; i++)
+		/* DEBUG */System.out.print("Cell:\tInitializing Neighbors...\n"
+		+"Cell:\tPosition:\tx = "+x+"\ty = "+y+"\n");
+		
+		neighbor = new Cell[8];
+		for(int i = 0; i < 8; i++)
 			neighbor[i] = null;
 		neighbors = 0;
 		
-		if( x+1 < 20 ){
+		if( x+1 < container.getWidth()-1 ){
 			neighbor[0] = container.getAt(x+1, y);
 			
-			if(	y+1 < 20 ){
+			if(	y+1 < container.getHeight()-1 ){
 				neighbor[1] = container.getAt(x+1, y+1); neighbors++; }
 			
 			if( y-1 > -1 ){
@@ -40,7 +54,7 @@ public class Cell implements Runnable {
 		if( x-1 > -1 ){
 			neighbor[3] = container.getAt(x+1, y);
 			
-			if(	y+1 < 20 ){
+			if(	y+1 < container.getHeight() ){
 				neighbor[4] = container.getAt(x+1, y+1); neighbors++; }
 			
 			if( y-1 > -1 ){
@@ -48,12 +62,13 @@ public class Cell implements Runnable {
 			
 		} else { neighbor[3] = neighbor[4] = neighbor[5] = null;}
 		
-		if(	y+1 < 20){
+		if(	y+1 < container.getHeight()-1 ){
 			neighbor[6] = container.getAt(x, y+1); neighbors++; }
 		
 		if( y-1 > -1){
 			neighbor[7] = container.getAt(x, y-1); neighbors++; }
 		
+		/* DEBUG */System.out.print("Cell:\tInitialization of neighboring cells complete.");
 		return;
 	}
 	

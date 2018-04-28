@@ -13,7 +13,19 @@ public class Map<T>{
 		data = (T[][]) ( new Object[dim.width][dim.height] );
 	}
 	
-	public T getAt(int x, int y){ return data[x][y]; }
+	public T getAt(int x, int y){ 
+		
+		try{
+			if(data[x][y] == null)
+				throw new NullPointerException();
+		}	
+		catch(NullPointerException e){
+			System.err.print("Map:\tElement at ( " + x + " , " 
+					+ y + " ) does not exist.\n" + e.getStackTrace());
+		}
+				
+		return data[x][y];
+	}
 	
 	public Dimension getDimension(){ return dim; }
 	
@@ -21,7 +33,14 @@ public class Map<T>{
 	
 	public int getHeight(){ return dim.height; }
 	
-	public void setAt(T elem, int x, int y){ data[x][y] = elem; }
+	public void setAt(T elem, int x, int y){ 
+		try{
+			data[x][y] = elem;
+		}
+		catch (NullPointerException e){
+			System.err.print("Map:\tElement at ( " + x + " , " 
+					+ y + " ) does not exist.\n" + e.getStackTrace());		}
+	}
 	
 	public String toString(){
 		String str = "";

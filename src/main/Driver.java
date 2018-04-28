@@ -32,7 +32,7 @@ public class Driver {
 		try {
 			int sec = 0;
 			while(imp.getSelectedFile() == null){
-				/* DEBUG */System.out.print("Driver:\timp.getSelectedFile() == null.\n");
+				/* DEBUG *///System.out.print("Driver:\timp.getSelectedFile() == null.\n");
 				TimeUnit.SECONDS.sleep(1);
 				sec++;
 				if(sec > 300)
