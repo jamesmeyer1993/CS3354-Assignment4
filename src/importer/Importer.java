@@ -78,9 +78,9 @@ public class Importer {
 		for(int i = 0; i < map.getHeight(); i++){
 			for(int j = 0; j < map.getWidth(); j++){
 				if( ( tmap.charAt(p) == 'x' ) || ( smap.charAt(p) == 'X') )
-					map.setAt(new Cell(true, map, i, j), i, j);
+					map.setAt(new Cell(true, map, i, j, Integer.getInteger(strnum) ), i, j);
 				else if( ( tmap.charAt(p) == 'o' ) || ( smap.charAt(p) == 'O' ) )
-					map.setAt(new Cell(false, map, i, j), i, j);
+					map.setAt(new Cell(false, map, i, j, Integer.getInteger(strnum) ), i, j);
 				p++;
 			}
 		}
