@@ -15,7 +15,7 @@ import cellmap.*;
 public class Driver {
 
 	/* Final variables */
-	public static final char VALID_CHARS[] = {'X','x','O','o','\n',(char)10,'0','1','2','3','4','5','6','7','8','9'};
+	public static final char VALID_CHARS[] = {'X','x','O','o','\n','\r','0','1','2','3','4','5','6','7','8','9'};
 	public static final int MAX_FILE_SIZE = 1024;
 	
 	/*	*	*	*	*	*	*	*	*	*	*	*	*	*	

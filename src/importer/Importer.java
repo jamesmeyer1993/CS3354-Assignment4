@@ -52,35 +52,34 @@ public class Importer {
 		
 		/* DEBUG */System.out.print("Importer:\tfile read into 'smap'\t:\n\n" + smap.toString() + "\n\n");
 		
+		smap = smap.toLowerCase();
+		
 		/* Determine longest line and number of lines */
-		int longest = 0;
 		int lines = 0;
-		int cur = 0;
+		String tmap = "";
+		String strnum = "";
+		
 		for(int i = 0; i < smap.length(); i++){
 			
-			if(smap.charAt(i) != '\n')
-				cur++;
-			else{
-				if(cur > longest){
-					longest = cur;
-					cur = 0;
-				}
+			if(smap.charAt(i) == '\n')
 				lines++;
-			}	
+			
+			else if( smap.charAt(i) == 'x' || smap.charAt(i) == 'o' )
+				tmap = tmap + smap.charAt(i);
+			
+			else if( smap.charAt(i) <= '0' || smap.charAt(i) >= '9' )
+				strnum = strnum + smap.charAt(i);
 		}
 		
-		/* DEBUG */System.out.print("Importer:\tFile stats:\n\tlongest line = "+longest+"\n" +
-				"\tnumber of lines = " + lines + "\n");
-		
 		/* Now we have the data we need to instantiate a map */
-		map = new Map<Cell>(new Dimension(longest, lines));		
+		map = new Map<Cell>(new Dimension(smap.indexOf("\n"), lines));		
 		
 		int p = 0;
-		for(int i = 0; i < map.getHeight()-1; i++){
-			for(int j = 0; j < map.getWidth()-1; j++){
-				if( ( smap.charAt(p) == 'x' ) || ( smap.charAt(p) == 'X') )
+		for(int i = 0; i < map.getHeight(); i++){
+			for(int j = 0; j < map.getWidth(); j++){
+				if( ( tmap.charAt(p) == 'x' ) || ( smap.charAt(p) == 'X') )
 					map.setAt(new Cell(true, map, i, j), i, j);
-				else
+				else if( ( tmap.charAt(p) == 'o' ) || ( smap.charAt(p) == 'O' ) )
 					map.setAt(new Cell(false, map, i, j), i, j);
 				p++;
 			}

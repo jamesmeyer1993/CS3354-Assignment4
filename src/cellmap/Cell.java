@@ -22,18 +22,15 @@ public class Cell implements Runnable {
 		this.y = y;
 		
 		/* DEBUG */
-		if(of_this_type_count%20 == 0) 
-			System.out.print("\n");
+		if(of_this_type_count%8 == 0) 
+			System.out.print("\n\t");
 		
-		System.out.print("Cell_" + of_this_type_count + ":\t"
+		System.out.print("Cell_" + of_this_type_count + ": "
 			+ "instantiated at (" + this.x + "," + this.y + ")\t");
 		/* END DEBUG */
 	}
 	
 	public void initNeighbors(){
-		
-		/* DEBUG */System.out.print("Cell:\tInitializing Neighbors...\n"
-		+"Cell:\tPosition:\tx = "+x+"\ty = "+y+"\n");
 		
 		neighbor = new Cell[8];
 		for(int i = 0; i < 8; i++)
@@ -68,7 +65,6 @@ public class Cell implements Runnable {
 		if( y-1 > -1){
 			neighbor[7] = container.getAt(x, y-1); neighbors++; }
 		
-		/* DEBUG */System.out.print("Cell:\tInitialization of neighboring cells complete.");
 		return;
 	}
 	
