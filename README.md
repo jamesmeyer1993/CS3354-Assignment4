@@ -1,2 +1,2 @@
 # CS3354-Assignment4
-Game of Life
+Game of Life by James Meyer
