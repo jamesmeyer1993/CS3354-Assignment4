@@ -7,6 +7,7 @@ public class Map<T>{
 
 	private Dimension dim;
 	private T data[][];
+	private int numOfElem;
 	
 	public Map(Dimension d){
 		dim = d;
@@ -33,9 +34,12 @@ public class Map<T>{
 	
 	public int getHeight(){ return dim.height; }
 	
+	public int getNumberofElements(){ return numOfElem; }
+	
 	public void setAt(T elem, int x, int y){ 
 		try{
 			data[x][y] = elem;
+			numOfElem++;
 		}
 		catch (NullPointerException e){
 			System.err.print("Map:\tElement at ( " + x + " , " 

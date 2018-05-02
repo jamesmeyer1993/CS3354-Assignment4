@@ -67,28 +67,35 @@ public class Importer {
 			else if( smap.charAt(i) == 'x' || smap.charAt(i) == 'o' )
 				tmap = tmap + smap.charAt(i);
 			
-			else if( smap.charAt(i) <= '0' || smap.charAt(i) >= '9' )
+			else if( smap.charAt(i) >= '0' && smap.charAt(i) <= '9' )
 				strnum = strnum + smap.charAt(i);
 		}
+		
+		/* DEBUG */System.out.print("Importer:\tstrnum = " + strnum + "\n");
 		
 		/* Now we have the data we need to instantiate a map */
 		map = new Map<Cell>(new Dimension(smap.indexOf("\n"), lines));		
 		
-		int p = 0;
-		for(int i = 0; i < map.getHeight(); i++){
-			for(int j = 0; j < map.getWidth(); j++){
-				if( ( tmap.charAt(p) == 'x' ) || ( smap.charAt(p) == 'X') )
-					map.setAt(new Cell(true, map, i, j, Integer.getInteger(strnum) ), i, j);
-				else if( ( tmap.charAt(p) == 'o' ) || ( smap.charAt(p) == 'O' ) )
-					map.setAt(new Cell(false, map, i, j, Integer.getInteger(strnum) ), i, j);
-				p++;
+		try{
+			int p = 0;
+			for(int i = 0; i < map.getHeight(); i++){
+				for(int j = 0; j < map.getWidth(); j++){
+					if( ( tmap.charAt(p) == 'x' ) || ( smap.charAt(p) == 'X') )
+						map.setAt(new Cell(true, map, i, j, Integer.parseInt(strnum) ), i, j);
+					else if( ( tmap.charAt(p) == 'o' ) || ( smap.charAt(p) == 'O' ) )
+						map.setAt(new Cell(false, map, i, j, Integer.parseInt(strnum) ), i, j);
+					p++;
+				}
 			}
-		}
-		
-		
-		for(int i = 0; i < map.getHeight()-1; i++){
-			for(int j = 0; j < map.getWidth()-1; j++)
-				map.getAt(i, j).initNeighbors();
+			
+			for(int i = 0; i < map.getHeight()-1; i++){
+				for(int j = 0; j < map.getWidth()-1; j++)
+					map.getAt(i, j).initNeighbors();
+			}
+		} catch (ArrayIndexOutOfBoundsException e){
+			//TODO: find source of this exception.
+		} catch (StringIndexOutOfBoundsException e){
+			//TODO: find source of this exception.
 		}
 		
 		return map;

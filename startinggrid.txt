@@ -2,12 +2,10 @@ oooooooooooooooooooo
 oooooooooooooooooooo
 oooooooooooooooooooo
 oooooooooooooooooooo
-oooooooooooooooooooo
-ooooooooxxoooooooooo
-ooooooooxxoooooooooo
-oooooooooooooooooooo
-oooooooooooooooooooo
-oooooooooooooooooooo
+ooooooooxooooooooooo
+oooooooxxxoooooooooo
+ooooooooxxxxxxxooooo
+oooooooooxoooooooooo
 oooooooooooooooooooo
 oooooooooooooooooooo
 oooooooooooooooooooo
@@ -18,4 +16,6 @@ oooooooooooooooooooo
 oooooooooooooooooooo
 oooooooooooooooooooo
 oooooooooooooooooooo
-7
+oooooooooooooooooooo
+oooooooooooooooooooo
+5

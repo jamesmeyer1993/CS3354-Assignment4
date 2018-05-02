@@ -4,11 +4,12 @@
 
 package main;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit.*;
 /*
  * LOCAL IMPORTS
  * */
-import java.util.concurrent.TimeUnit;
-
 import importer.*;
 import cellmap.*;
 
@@ -51,7 +52,33 @@ public class Driver {
 		/* DEBUG */System.out.print("Driver:\tReady to import.\n");
 		Map<Cell> cmap = imp.importFile();
 		
-		System.out.print(cmap.toString()+"\n\n");
+		
+		System.out.print("\n\n" + cmap.toString()+"\n\n");
+		
+		Thread t[] = new Thread[cmap.getNumberofElements()];
+		int position = 0;
+		
+		for(int i = 0; i < cmap.getWidth(); i++){
+			for(int j = 0; j < cmap.getHeight(); j++){
+				t[position] = new Thread(cmap.getAt(i, j), "Cell"+position);
+				position++;
+			}
+		}
+		
+		for(Thread k : t)
+			k.start();
+		
+		for(Thread k : t){
+			try {
+				k.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		System.out.print("\n\n" + cmap.toString()+"\n\n");
+		
+		/* DEBUG */System.out.print("Driver:\tDone.");
 	}	
 
 }

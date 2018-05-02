@@ -1,5 +1,6 @@
 package cellmap;
 
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Cell implements Runnable {
 
@@ -12,6 +13,8 @@ public class Cell implements Runnable {
 	private boolean curstate, prevstate;
 	private int x, y, generation, range;
 	
+	private ReentrantLock rlock;	/* thread stuff */
+	
 	public Cell(boolean a, Map<Cell> m, int x, int y, int r){
 		of_this_type_count++;
 		curstate = a;
@@ -21,6 +24,8 @@ public class Cell implements Runnable {
 		
 		this.x = x;
 		this.y = y;
+		
+		rlock = new ReentrantLock();
 		
 		/* DEBUG */
 		if(of_this_type_count%8 == 0) 
@@ -70,16 +75,21 @@ public class Cell implements Runnable {
 	}
 	
 	public void run() {
-		/*
-		 * Any live cell with fewer than two live neighbors dies, as if caused by under-population.
+
+		/* Any live cell with fewer than two live neighbors dies, as if caused by under-population.
 		 * Any live cell with two or three live neighbors lives on to the next generation.
 		 * Any live cell with more than three live neighbors dies, as if by overpopulation.
 		 * Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
-		 * 
 		 * */
 		
-		while(generation < range){
+		/* DEBUG */System.out.print(this.toString()+"\trunning...\n");
 		
+		rlock.lock();
+		
+		while(generation < range){
+			
+			/* DEBUG */System.out.print("\t" + this.toString() + "\tdoing cell stuff.\n");
+			
 			int alive = 0;
 			
 			for(int i = 0; i < neighbors; i++){
@@ -98,35 +108,40 @@ public class Cell implements Runnable {
 				
 				if( neighbor[i].getGeneration() < this.generation ){
 					try {
-						Thread.sleep(400);
+						Thread.sleep(100);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
 			}
-
+	
 			if( alive == 2 || alive == 3 )
 				this.setCurstate(true);
 			else
 				this.setCurstate(false);
-				
-			generation++;
 			
-			try{ Thread.sleep(400); } catch(InterruptedException e){ e.printStackTrace(); }
+			generation++;
+			/* DEBUG */System.out.print("\t" + this.toString() + "\tdone with cell stuff.\n");
 		}
 		
-		return;
+		//try{ Thread.sleep(400); } catch(InterruptedException e){ e.printStackTrace(); }
+		
+		rlock.unlock();
 	}
 	
 	public int[] getPosition(){ int pos[] = {x, y}; return pos; }
 	
-	public boolean getCurstate(){ return curstate; }
+	public boolean getCurstate(){
+		return curstate;
+	}
 	
 	public boolean getPrevstate(){ return prevstate; }
 	
 	public int getGeneration(){ return generation; }
 	
 	public int getNeighbors(){ return neighbors; }
+	
+	public int getRange(){ return range; }
 	
 	/* For the run algorithm */
 	private void setCurstate(boolean status){
@@ -137,5 +152,8 @@ public class Cell implements Runnable {
 	private void setPrevstate(boolean status){
 		prevstate = status;
 	}
-	
+
+	public String toString(){
+		return "Cell/("+x+","+y+")/generation="+getGeneration()+"/current_state="+curstate;
+	}
 }
